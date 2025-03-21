@@ -1,0 +1,21 @@
+[project]
+name = "csvu"
+version = "0.1.0"
+description = "CSV files with units in the one-line header"
+readme = "README.md"
+authors = [
+    { name = "G. D. McBain", email = "gdmcbain@pm.me" }
+]
+requires-python = ">=3.13.2"
+dependencies = [
+    "pint-pandas>=0.7.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.1",
+]
