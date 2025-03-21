@@ -6,11 +6,16 @@ import pint_pandas
 
 def read_csv(filepath: Path) -> pandas.DataFrame:
     raw = pandas.read_csv(filepath)
-    columns, units = zip(*raw.columns.map(lambda c: c.split("/", 1)))
-    raw.columns = [c.rstrip() for c in columns]
-    return raw.astype(
-        dict(zip(raw.columns, [f"pint[{u.strip(' ()')}]" for u in units]))
-    )
+    units = {}
+    for k, c in enumerate(raw):
+        if "/" in c:
+            column, unit = c.split("/", 1)
+        else:
+            column = c
+            unit = "dimensionless"
+        units[column.rstrip()] = f"pint[{unit.strip(' ()')}]"
+    raw.columns = list(units.keys())
+    return raw.astype(units)
 
 
 def write_csv(df: pandas.DataFrame, filepath: Path) -> None:
