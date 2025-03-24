@@ -7,7 +7,7 @@ import pint_pandas
 def read_csv(filepath: Path) -> pandas.DataFrame:
     raw = pandas.read_csv(filepath)
     units = {}
-    for k, c in enumerate(raw):
+    for c in raw:
         if "/" in c:
             column, unit = c.split("/", 1)
         else:
