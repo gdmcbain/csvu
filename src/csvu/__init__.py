@@ -29,8 +29,6 @@ def read_csv(
         parse_raw_name = partial(parse_raw_name_bracketed, brackets=parse_raw_name)
     elif parse_raw_name in ["/", ",", ":"]:
         parse_raw_name = partial(parse_raw_name_algebraic, delimiter=parse_raw_name)
-    else:
-        raise NotImplementedError(f"Unrecognized style: {parse_raw_name=}.")
 
     df.columns = pd.MultiIndex.from_tuples(df.columns.map(parse_raw_name))
     return df.pint.quantify()
