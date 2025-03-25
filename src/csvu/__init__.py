@@ -7,8 +7,8 @@ import pandas as pd
 import pint_pandas
 
 
-def parse_raw_name_algebraic(name: str) -> Tuple[str, str]:
-    quantity = name.split("/", 1)
+def parse_raw_name_algebraic(name: str, delimiter: str = "/") -> Tuple[str, str]:
+    quantity = name.split(delimiter, 1)
     return quantity[0], (quantity[1].strip(" ()") if quantity[1:] else "dimensionless")
 
 
