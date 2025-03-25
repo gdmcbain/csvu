@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from functools import partial
 from pathlib import Path
 from typing import Optional, Tuple, Union
 
@@ -26,8 +27,8 @@ def read_csv(
 
     if parse_raw_name is None or parse_raw_name == "/":
         parse_raw_name = parse_raw_name_algebraic
-    elif parse_raw_name in ["()", "[]"]:
-        parse_raw_name = parse_raw_name_bracketed
+    elif parse_raw_name in ["()", "[]", "{}", "<>"]:
+        parse_raw_name = partial(parse_raw_name_bracketed, brackets=parse_raw_name)
 
     df.columns = pd.MultiIndex.from_tuples(df.columns.map(parse_raw_name))
     return df.pint.quantify()
