@@ -1,20 +1,35 @@
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Tuple
+from typing import Optional, Tuple, Union
 
 import pandas as pd
 import pint_pandas
 
 
-def parse_raw_name(name: str) -> Tuple[str, str]:
+def parse_raw_name_algebraic(name: str) -> Tuple[str, str]:
     quantity = name.split("/", 1)
     return quantity[0], (quantity[1].strip(" ()") if quantity[1:] else "dimensionless")
 
 
+def parse_raw_name_bracketed(name: str, brackets: str = "()") -> Tuple[str, str]:
+    quantity = name.split(brackets[0], 1)
+    return quantity[0], (
+        quantity[1].rstrip(f"{brackets[1]} ") if quantity[1:] else "dimensionless"
+    )
+
+
 def read_csv(
-    filepath: Path, parse_raw_name: Callable[[str], Tuple[str, str]] = parse_raw_name
+    filepath: Path,
+    parse_raw_name: Optional[Union[Callable[[str], Tuple[str, str]], str]] = None,
 ) -> pd.DataFrame:
     df = pd.read_csv(filepath)
-    df.columns = pd.MultiIndex.from_tuples([parse_raw_name(c) for c in df.columns])
+
+    if parse_raw_name is None or parse_raw_name == "/":
+        parse_raw_name = parse_raw_name_algebraic
+    elif parse_raw_name in ["()", "[]"]:
+        parse_raw_name = parse_raw_name_bracketed
+
+    df.columns = pd.MultiIndex.from_tuples(df.columns.map(parse_raw_name))
     return df.pint.quantify()
 
 
