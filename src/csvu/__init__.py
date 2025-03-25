@@ -21,16 +21,16 @@ def parse_raw_name_bracketed(name: str, brackets: str = "()") -> Tuple[str, str]
 
 def read_csv(
     filepath: Path,
-    parse_raw_name: Union[Callable[[str], Tuple[str, str]], str] = "/",
+    parse_raw_name: Union[Callable[[str], Tuple[str, str]], str] = "()",
 ) -> pd.DataFrame:
     df = pd.read_csv(filepath)
 
-    if parse_raw_name is None:
-        parse_raw_name = parse_raw_name_algebraic
+    if parse_raw_name in ["()", "[]", "{}", "<>"]:
+        parse_raw_name = partial(parse_raw_name_bracketed, brackets=parse_raw_name)
     elif parse_raw_name in ["/", ",", ":"]:
         parse_raw_name = partial(parse_raw_name_algebraic, delimiter=parse_raw_name)
-    elif parse_raw_name in ["()", "[]", "{}", "<>"]:
-        parse_raw_name = partial(parse_raw_name_bracketed, brackets=parse_raw_name)
+    else:
+        raise NotImplementedError(f"Unrecognized style: {parse_raw_name=}.")
 
     df.columns = pd.MultiIndex.from_tuples(df.columns.map(parse_raw_name))
     return df.pint.quantify()
