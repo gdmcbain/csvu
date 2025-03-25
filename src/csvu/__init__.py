@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from functools import partial
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Tuple, Union
 
 import pandas as pd
 import pint_pandas
@@ -21,12 +21,14 @@ def parse_raw_name_bracketed(name: str, brackets: str = "()") -> Tuple[str, str]
 
 def read_csv(
     filepath: Path,
-    parse_raw_name: Optional[Union[Callable[[str], Tuple[str, str]], str]] = None,
+    parse_raw_name: Union[Callable[[str], Tuple[str, str]], str] = "/",
 ) -> pd.DataFrame:
     df = pd.read_csv(filepath)
 
-    if parse_raw_name is None or parse_raw_name == "/":
+    if parse_raw_name is None:
         parse_raw_name = parse_raw_name_algebraic
+    elif parse_raw_name in ["/", ",", ":"]:
+        parse_raw_name = partial(parse_raw_name_algebraic, delimiter=parse_raw_name)
     elif parse_raw_name in ["()", "[]", "{}", "<>"]:
         parse_raw_name = partial(parse_raw_name_bracketed, brackets=parse_raw_name)
 
