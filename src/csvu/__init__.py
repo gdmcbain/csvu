@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Tuple, Union
 
 import pandas as pd
+import pint
 import pint_pandas
 
 
@@ -33,6 +34,8 @@ def read_csv(
         parse_raw_name = partial(parse_raw_name_algebraic, delimiter=parse_raw_name)
 
     df.columns = pd.MultiIndex.from_tuples(df.columns.map(parse_raw_name))
+
+    pint.get_application_registry()
     return df.pint.quantify()
 
 
