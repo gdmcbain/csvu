@@ -1,6 +1,6 @@
 [project]
 name = "csvu"
-version = "0.1.3"
+version = "0.2.0"
 description = "CSV files with units in the one-line header"
 readme = "README.md"
 authors = [{ name = "G. D. McBain", email = "gdmcbain@pm.me" }]
